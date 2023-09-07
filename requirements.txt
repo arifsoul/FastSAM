@@ -12,8 +12,10 @@ tqdm>=4.64.0
 pandas>=1.1.4
 seaborn>=0.11.0
 
-gradio==3.35.2
+# gradio==3.35.2
+gradio
 
 # Ultralytics-----------------------------------
-ultralytics == 8.0.120
+# ultralytics == 8.0.120
+ultralytics
 
