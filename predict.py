@@ -14,14 +14,32 @@ from utils.tools import *
 class Predictor(BasePredictor):
     def setup(self):
         """Load the model into memory to make running multiple predictions efficient"""
-        self.models = {k: YOLO(f"{k}.pt") for k in ["FastSAM-s", "FastSAM-x"]}
+        # self.models = {
+        #     k: YOLO(f"{k}.pt") for k in ["FastSAM-s", "FastSAM-x", "yolov8x-seg.pt"]
+        # }
+
+        checkpoint_dir = os.environ.get(
+            "TORCH_HOME", os.path.expanduser("~/.cache/torch/hub/checkpoints")
+        )
+
+        self.models = {
+            "FastSAM-s": YOLO(
+                f"{checkpoint_dir}/FastSAM-s.pt"
+            ),  # Ganti "FastSAM-s.pt" dengan path ke model lokal Anda
+            "FastSAM-x": YOLO(
+                f"{checkpoint_dir}/FastSAM-x.pt"
+            ),  # Ganti "FastSAM-x.pt" dengan path ke model lokal Anda
+            "yolov8x-seg.pt": YOLO(
+                f"{checkpoint_dir}/yolov8x-seg.pt"
+            ),  # Ganti "yolov8x-seg.pt" dengan path ke model lokal Anda
+        }
 
     def predict(
         self,
         input_image: Path = Input(description="Input image"),
         model_name: str = Input(
             description="choose a model",
-            choices=["FastSAM-x", "FastSAM-s"],
+            choices=["FastSAM-x", "FastSAM-s", "yolov8x-seg.pt"],
             default="FastSAM-x",
         ),
         iou: float = Input(
@@ -36,7 +54,9 @@ class Predictor(BasePredictor):
         ),
         box_prompt: str = Input(default="[0,0,0,0]", description="[x,y,w,h]"),
         point_prompt: str = Input(default="[[0,0]]", description="[[x1,y1],[x2,y2]]"),
-        point_label: str = Input(default="[0]", description="[1,0] 0:background, 1:foreground"),
+        point_label: str = Input(
+            default="[0]", description="[1,0] 0:background, 1:foreground"
+        ),
         withContours: bool = Input(
             description="draw the edges of the masks", default=False
         ),
@@ -60,7 +80,7 @@ class Predictor(BasePredictor):
             if torch.backends.mps.is_available()
             else "cpu"
         )
-        
+
         args = argparse.Namespace(
             better_quality=better_quality,
             box_prompt=box_prompt,
