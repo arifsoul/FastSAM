@@ -1,12 +1,14 @@
 import torch
 
-# from ultralytics.yolo.engine.results import Results
-# from ultralytics.yolo.utils import DEFAULT_CFG, ops
-# from ultralytics.yolo.v8.detect.predict import DetectionPredictor
+try:
+    from ultralytics.yolo.engine.results import Results
+    from ultralytics.yolo.utils import DEFAULT_CFG, ops
+    from ultralytics.yolo.v8.detect.predict import DetectionPredictor
 
-from ultralytics.engine.results import Results
-from ultralytics.utils import DEFAULT_CFG, ops
-from ultralytics.models.yolo.detect.predict import DetectionPredictor
+except:
+    from ultralytics.engine.results import Results
+    from ultralytics.utils import DEFAULT_CFG, ops
+    from ultralytics.models.yolo.detect.predict import DetectionPredictor
 
 from .utils import bbox_iou
 
