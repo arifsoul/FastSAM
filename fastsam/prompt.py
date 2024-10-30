@@ -48,6 +48,7 @@ class FastSAMPrompt:
             annotation['bbox'] = result.boxes.data[i]
             annotation['score'] = result.boxes.conf[i]
             annotation['area'] = annotation['segmentation'].sum()
+            annotation['class'] = int(result.boxes.cls[i])
             annotations.append(annotation)
         return annotations
 
@@ -415,7 +416,7 @@ class FastSAMPrompt:
     def point_prompt(self, points, pointlabel):  # numpy 
         if self.results == None:
             return []
-        masks = self._format_results(self.results[0], 0)
+        masks = self.s(self.results[0], 0)
         target_height = self.img.shape[0]
         target_width = self.img.shape[1]
         h = masks[0]['segmentation'].shape[0]
@@ -452,5 +453,13 @@ class FastSAMPrompt:
     def everything_prompt(self):
         if self.results == None:
             return []
-        return self.results[0].masks.data
         
+        dict_class = self.results[0].names
+        class_index = self.results[0].boxes.cls
+        class_names = [dict_class[int(idx)] for idx in class_index]
+        confidence = self.results[0].boxes.conf
+        bbox_data = self.results[0].boxes.data
+        mask_data = self.results[0].masks.data
+
+        return dict_class, class_index, class_names, confidence, bbox_data, mask_data
+         
